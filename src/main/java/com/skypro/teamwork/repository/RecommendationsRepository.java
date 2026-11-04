@@ -38,4 +38,5 @@ public class RecommendationsRepository {
         Integer sum = jdbcTemplate.queryForObject(sql, Integer.class, userId, productType, transactionType);
         return sum != null ? sum : 0;
     }
-}
+} //универсальные методы для работы с БД готовы
+

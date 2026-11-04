@@ -31,4 +31,4 @@ public class Invest500RuleSet implements RecommendationRuleSet {
         }
         return Optional.empty();
     }
-}
+}// Реализована логика правила Invest 500

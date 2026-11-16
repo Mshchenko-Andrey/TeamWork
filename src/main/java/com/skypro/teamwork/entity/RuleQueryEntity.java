@@ -13,7 +13,8 @@ public class RuleQueryEntity {
 
     private String query;
 
-    @ElementCollection
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "rule_query_arguments", joinColumns = @JoinColumn(name = "rule_query_id"))
     @Column(name = "argument")
     private List<String> arguments;

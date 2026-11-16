@@ -7,14 +7,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.UUID;
+import java.util.List;
 
 @Repository
 public class RecommendationsRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    // Настраиваем 3 кеша (по одному на каждый метод)
+
     private final Cache<String, Boolean> userOfCache = Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(10))
             .maximumSize(1000)
@@ -34,7 +36,7 @@ public class RecommendationsRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // --- МЕТОДЫ ДЛЯ СТАРЫХ ФИКСИРОВАННЫХ ПРАВИЛ ---
+
     public boolean hasProductType(UUID userId, String productType) {
         return checkUserOf(userId, productType);
     }
@@ -53,7 +55,7 @@ public class RecommendationsRepository {
         });
     }
 
-    // --- НОВЫЕ МЕТОДЫ ДЛЯ ДИНАМИЧЕСКИХ ПРАВИЛ (С КЕШЕМ) ---
+
 
     public boolean checkUserOf(UUID userId, String productType) {
         String key = userId + "_" + productType;
@@ -103,5 +105,18 @@ public class RecommendationsRepository {
             case "<=" -> left <= right;
             default -> throw new IllegalArgumentException("Неизвестный оператор: " + operator);
         };
+    }
+    public void clearAllCaches() {
+        userOfCache.invalidateAll();
+        activeUserOfCache.invalidateAll();
+        sumCache.invalidateAll();
+    }
+    public List<Map<String, Object>> findUsersByName(String firstName, String lastName) {
+        String sql = """
+                SELECT id, first_name, last_name
+                FROM users
+                WHERE LOWER(first_name) = LOWER(?) AND LOWER(last_name) = LOWER(?)
+                """;
+        return jdbcTemplate.queryForList(sql, firstName, lastName);
     }
 }

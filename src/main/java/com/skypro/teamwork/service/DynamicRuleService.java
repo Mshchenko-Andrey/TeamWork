@@ -15,10 +15,14 @@ public class DynamicRuleService {
 
     private final RuleService ruleService;
     private final RecommendationsRepository recommendationsRepository;
+    private final StatsService statsService;
 
-    public DynamicRuleService(RuleService ruleService, RecommendationsRepository recommendationsRepository) {
+    public DynamicRuleService(RuleService ruleService,
+                              RecommendationsRepository recommendationsRepository,
+                              StatsService statsService) {
         this.ruleService = ruleService;
         this.recommendationsRepository = recommendationsRepository;
+        this.statsService = statsService;
     }
 
     public Optional<RecommendationDto> checkDynamicRules(UUID userId) {
@@ -34,11 +38,12 @@ public class DynamicRuleService {
                 }
                 if (!result) {
                     allQueriesMatch = false;
-                    break; // Если хотя бы одно условие не выполнено, правило не подходит
+                    break;
                 }
             }
 
             if (allQueriesMatch) {
+                statsService.incrementRuleCounter(rule.getId());
                 return Optional.of(new RecommendationDto(
                         rule.getProductId(),
                         rule.getProductName(),

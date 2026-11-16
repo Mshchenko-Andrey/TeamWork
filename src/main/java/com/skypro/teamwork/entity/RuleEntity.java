@@ -21,8 +21,9 @@ public class RuleEntity {
     @Column(name = "product_text", length = 1000)
     private String productText;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "rule_id", nullable = false) // <-- Вот эта строчка важна!
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "rule_id", nullable = false)
     private List<RuleQueryEntity> rule;
 
 

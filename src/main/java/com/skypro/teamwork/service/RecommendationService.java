@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Сервис для формирования списка рекомендаций для пользователя.
+ * Объединяет результаты проверки статических правил (из первой итерации)
+ * и динамических правил (из базы данных PostgreSQL).
+ */
 @Service
 public class RecommendationService {
 
@@ -20,6 +25,14 @@ public class RecommendationService {
         this.dynamicRuleService = dynamicRuleService;
     }
 
+    /**
+     * Получает полный список рекомендаций для заданного пользователя.
+     * Сначала проверяются статические правила, затем динамические.
+     *
+     * @param userId Уникальный идентификатор пользователя (UUID).
+     * @return Список объектов {@link RecommendationDto} с рекомендованными продуктами.
+     *         Если рекомендаций нет, возвращается пустой список.
+     */
     public List<RecommendationDto> getRecommendations(UUID userId) {
         List<RecommendationDto> recommendations = new ArrayList<>();
 

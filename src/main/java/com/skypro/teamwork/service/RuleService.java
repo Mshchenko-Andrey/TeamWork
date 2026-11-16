@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для управления динамическими правилами рекомендаций.
+ * Обеспечивает создание, чтение и удаление правил в базе данных PostgreSQL.
+ */
 @Service
 public class RuleService {
 
@@ -21,7 +25,12 @@ public class RuleService {
         this.ruleRepository = ruleRepository;
     }
 
-
+    /**
+     * Создает новое динамическое правило.
+     *
+     * @param ruleDto DTO с данными правила.
+     * @return Созданное правило с присвоенным ID.
+     */
     @Transactional
     public RuleDto createRule(RuleDto ruleDto) {
         RuleEntity entity = toEntity(ruleDto);
@@ -29,7 +38,11 @@ public class RuleService {
         return toDto(savedEntity);
     }
 
-
+    /**
+     * Возвращает список всех динамических правил.
+     *
+     * @return Список DTO всех правил.
+     */
     @Transactional(readOnly = true)
     public List<RuleDto> getAllRules() {
         return ruleRepository.findAll().stream()
@@ -37,7 +50,11 @@ public class RuleService {
                 .collect(Collectors.toList());
     }
 
-
+    /**
+     * Удаляет правило по ID продукта.
+     *
+     * @param productId ID продукта (UUID).
+     */
     @Transactional
     public void deleteRule(UUID productId) {
         ruleRepository.deleteByProductId(productId);

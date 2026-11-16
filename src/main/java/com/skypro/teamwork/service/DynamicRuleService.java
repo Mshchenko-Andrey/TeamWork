@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Сервис для проверки динамических правил рекомендаций.
+ * Загружает правила из базы данных PostgreSQL и проверяет их выполнение для конкретного пользователя.
+ */
 @Service
 public class DynamicRuleService {
 
@@ -25,6 +29,13 @@ public class DynamicRuleService {
         this.statsService = statsService;
     }
 
+    /**
+     * Проверяет все динамические правила для заданного пользователя.
+     * Если правило срабатывает, возвращает рекомендацию и увеличивает счетчик статистики.
+     *
+     * @param userId ID пользователя (UUID).
+     * @return Optional с рекомендацией, если найдено подходящее правило, иначе пустой Optional.
+     */
     public Optional<RecommendationDto> checkDynamicRules(UUID userId) {
         List<RuleDto> allRules = ruleService.getAllRules();
 
@@ -54,6 +65,9 @@ public class DynamicRuleService {
         return Optional.empty();
     }
 
+    /**
+     * Выполняет один запрос (условие) из динамического правила.
+     */
     private boolean executeQuery(UUID userId, RuleQueryDto query) {
         String type = query.getQuery();
         List<String> args = query.getArguments();

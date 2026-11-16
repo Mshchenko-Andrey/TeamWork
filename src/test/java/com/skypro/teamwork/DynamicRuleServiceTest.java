@@ -6,6 +6,7 @@ import com.skypro.teamwork.dto.RuleQueryDto;
 import com.skypro.teamwork.repository.RecommendationsRepository;
 import com.skypro.teamwork.service.DynamicRuleService;
 import com.skypro.teamwork.service.RuleService;
+import com.skypro.teamwork.service.StatsService; // <-- Новый импорт
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,9 @@ public class DynamicRuleServiceTest {
     @Mock
     private RecommendationsRepository recommendationsRepository;
 
+    @Mock
+    private StatsService statsService;
+
     @InjectMocks
     private DynamicRuleService dynamicRuleService;
 
@@ -35,8 +40,8 @@ public class DynamicRuleServiceTest {
     void testCheckDynamicRules_WhenAllMatch() {
         UUID userId = UUID.randomUUID();
 
-
         RuleDto ruleDto = new RuleDto();
+        ruleDto.setId(1L);
         ruleDto.setProductName("Простой кредит");
         ruleDto.setProductId(UUID.randomUUID());
         ruleDto.setProductText("Текст...");
@@ -47,13 +52,10 @@ public class DynamicRuleServiceTest {
         queryDto.setNegate(false);
         ruleDto.setRule(List.of(queryDto));
 
-
         when(ruleService.getAllRules()).thenReturn(List.of(ruleDto));
         when(recommendationsRepository.checkUserOf(userId, "DEBIT")).thenReturn(true);
 
-
         Optional<RecommendationDto> result = dynamicRuleService.checkDynamicRules(userId);
-
 
         assertTrue(result.isPresent());
         assertTrue(result.get().getName().equals("Простой кредит"));
